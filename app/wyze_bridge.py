@@ -461,6 +461,12 @@ def env_bool(env: str, false: str = "") -> str:
     return env or false
 
 
+def env_bool_cs(env: str, false: str = "") -> str:
+    """Return a case sensitive env variable or empty string if the variable contains 'false' or is empty."""
+    env = os.getenv(env.upper().replace("-", "_"), "").replace("false", "")
+    return env or false
+
+
 def env_list(env: str) -> list:
     """Return env values as a list."""
     return [
@@ -630,7 +636,7 @@ def get_livestream_cmd(uri: str) -> str:
     if len(yt_key := env_bool(f"YOUTUBE_{uri}")) > 5:
         log.info("📺 YouTube livestream enabled")
         cmd += f"|[f=flv:select=v,a]rtmp://a.rtmp.youtube.com/live2/{yt_key}"
-    if len(fb_key := env_bool(f"FACEBOOK_{uri}")) > 5:
+    if len(fb_key := env_bool_cs(f"FACEBOOK_{uri}")) > 5:
         log.info("📺 Facebook livestream enabled")
         cmd += f"|[f=flv:select=v,a]rtmps://live-api-s.facebook.com:443/rtmp/{fb_key}"
     if len(tee_cmd := env_bool(f"LIVESTREAM_{uri}")) > 5:
